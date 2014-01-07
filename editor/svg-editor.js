@@ -1543,10 +1543,20 @@
 					$('#blur').val(blurval);
 					$('#blur_slider').slider('option', 'value', blurval);
 
+					/*
+					Responsible for creating dialogue to get an image URL
+					when a new image is being added using the image tool
+					*/
 					if (svgCanvas.addedNew) {
 						if (elname === 'image') {
 							// Prompt for URL if not a data URL
 							if (svgCanvas.getHref(elem).indexOf('data:') !== 0) {
+								/*
+								Creates a prompt which has a callback to set the 
+								image url using the entered value
+
+								Calls Editor.setImageURL
+								*/
 								promptImgURL();
 							}
 						} /*else if (elname == 'text') {
