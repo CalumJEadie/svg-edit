@@ -1445,17 +1445,61 @@
 				updateToolButtonState();
 			};
 
+			/*
+			Call Stack
+			- window.svgEditor.Editor.init.Editor.setImageURL
+			- window.svgEditor.Editor.init.updateContextPanel
+			- window.svgEditor.Editor.init.selectionChanged
+			- c.call
+			- addToSelection.addToSelection
+			- selectOnly.selectOnly
+			- (anon function)
+
+			Scope Variables
+			- Local
+				- url: "images/logo.png"
+			*/
 			var setImageURL = Editor.setImageURL = function(url) {
 				if (!url) url = defaultImageURL;
+				/*
+				Sets the new image URL for the selected image element.
+				Updates its size if a new URL is given
+				Selected image element is `selectedElements[0]`
+
+				e.g. selectedElements[0] = image#svg_1
+
+				Context of changing URL is stored in a closure
+
+				Uses Command design pattern to implement history
+				*/
 				svgCanvas.setImageURL(url);
+
+				/*
+				Updates dialogue to display the correct url
+				
+				#image_url and #change_image_url refers to inputs
+				within top toolbar, one or the other is shown
+				*/
 				$('#image_url').val(url);
 
 				if (url.indexOf('data:') === 0) {
 					// data URI found
+					/*
+					Already using a data URI so don't need to do any conversion.
+					*/
 					$('#image_url').hide();
 					$('#change_image_url').show();
 				} else {
 					// regular URL
+					/*
+					Converts a given image file to a data URL when possible,
+					then runs a given callback
+
+					svg-edit prefers to use data URLs if it can, as otherwise
+					would depend on external image URLs always being accessible?
+
+					Uses an SVG canvas to handle conversion to a base64 encoded image.
+					*/
 					svgCanvas.embedImage(url, function(dataURI) {
 						// Couldn't embed, so show warning
 						$('#url_notice').toggle(!dataURI);
